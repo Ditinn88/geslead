@@ -1,0 +1,35 @@
+{
+  "name": "geslead",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test:moneroo": "node --test supabase/functions/_shared/moneroo.test.ts",
+    "test:maketou": "node --test supabase/functions/_shared/maketou.test.ts",
+    "check:maketou": "node --env-file-if-exists=.env --env-file-if-exists=supabase/functions/.env scripts/check-maketou.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.109.0",
+    "apify-client": "^2.25.0",
+    "clsx": "^2.1.1",
+    "gsap": "^3.12.7",
+    "libphonenumber-js": "^1.11.18",
+    "lucide-react": "^1.16.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwind-merge": "^2.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "3.4.17",
+    "vite": "^5.4.14"
+  }
+}
