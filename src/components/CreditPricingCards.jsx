@@ -6,8 +6,8 @@ import { ORANGE_MONEY_GUINEA_CONFIG } from '../lib/billing/orangeMoneyGuinee';
 
 const PACK_DETAILS = {
   pack_1: {
-    name: 'Essentiel',
-    tagline: 'Idéal pour valider votre secteur et signer vos premiers prospects.',
+    name: 'Découverte',
+    tagline: 'Idéal pour tester 5 générations complètes et signer vos premiers prospects.',
     features: [
       '5 générations complètes (15 crédits)',
       'Détection automatique numéros WhatsApp',
@@ -15,14 +15,26 @@ const PACK_DETAILS = {
       'Liens directs wa.me illimités',
       'Crédits valables à vie sans expiration',
     ],
-    buttonText: 'Choisir Essentiel',
+    buttonText: 'Choisir Découverte',
   },
   pack_2: {
-    name: 'Performance',
-    tagline: 'Pour les agences, commerciaux et indépendants en prospection continue.',
+    name: 'Essentiel',
+    tagline: 'Idéal pour valider votre secteur et accélérer votre prospection.',
     features: [
       '15 générations complètes (45 crédits)',
       'Modèles de messages IA personnalisés',
+      'Détection automatique numéros WhatsApp',
+      'Export CSV illimité (Excel FR)',
+      'Crédits valables à vie sans expiration',
+    ],
+    buttonText: 'Choisir Essentiel',
+  },
+  pack_3: {
+    name: 'Performance',
+    tagline: 'Pour les indépendants et commerciaux en prospection continue.',
+    features: [
+      '45 générations complètes (135 crédits)',
+      'Modèles de messages IA haute conversion',
       'Détection automatique numéros WhatsApp',
       'Export CSV illimité (Excel FR)',
       'Support prioritaire WhatsApp',
@@ -30,11 +42,11 @@ const PACK_DETAILS = {
     ],
     buttonText: 'Choisir Performance',
   },
-  pack_3: {
+  pack_4: {
     name: 'Entreprise',
     tagline: 'Volume massif pour équipes commerciales et prospection multi-villes.',
     features: [
-      '50 générations complètes (150 crédits)',
+      '135 générations complètes (405 crédits)',
       'Scraping multi-villes et multi-secteurs',
       'Accès IA modèles haute conversion',
       'Export CSV sans restriction',
@@ -64,7 +76,7 @@ export default function CreditPricingCards({ onStartFree, onBuyCredits }) {
   const gnfPacks = ORANGE_MONEY_GUINEA_CONFIG.packs;
   const isGuinea = currencyZone === 'gnf';
 
-  // Le pack du milieu est mis en avant
+  // Le pack Essentiel (30 000 GNF / 45 crédits) est mis en avant
   const highlightIndex = 1;
 
   return (
@@ -96,8 +108,8 @@ export default function CreditPricingCards({ onStartFree, onBuyCredits }) {
         </div>
       </div>
 
-      {/* Grille des cartes de tarifs (1 essai gratuit + 3 packs payants = 4 colonnes) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch max-w-7xl mx-auto">
+      {/* Grille des cartes de tarifs (1 essai gratuit + 4 packs payants = 5 colonnes) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 lg:gap-6 items-stretch max-w-7xl mx-auto">
         {/* Carte Essai gratuit */}
         <div className="rounded-[2.5rem] bg-creme-pure border border-mousse/10 p-7 sm:p-8 flex flex-col justify-between shadow-md">
           <div>
