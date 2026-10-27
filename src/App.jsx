@@ -197,6 +197,7 @@ export default function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [userCredits, setUserCredits] = useState(WELCOME_CREDITS);
   const [showPassword, setShowPassword] = useState(false);
+  const [authReady, setAuthReady] = useState(!supabase);
   // Statut Créateur (Accès Gratuit & Illimité)
   const [isCreator, setIsCreator] = useState(() => checkIsCreator(currentUser));
 
