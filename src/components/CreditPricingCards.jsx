@@ -5,18 +5,6 @@ import { WELCOME_CREDITS, SEARCH_CREDIT_COST, formatPrice } from '../lib/billing
 import { ORANGE_MONEY_GUINEA_CONFIG } from '../lib/billing/orangeMoneyGuinee';
 
 const PACK_DETAILS = {
-  pack_starter: {
-    name: 'Découverte',
-    tagline: 'Idéal pour tester 1 génération complète (5 crédits) immédiatement.',
-    features: [
-      '1 génération complète (5 crédits)',
-      'Détection automatique numéros WhatsApp',
-      'Export CSV complet (Excel FR)',
-      'Liens directs wa.me illimités',
-      'Crédits valables à vie sans expiration',
-    ],
-    buttonText: 'Choisir Découverte',
-  },
   pack_1: {
     name: 'Essentiel',
     tagline: 'Idéal pour valider votre secteur et signer vos premiers prospects.',
@@ -108,8 +96,8 @@ export default function CreditPricingCards({ onStartFree, onBuyCredits }) {
         </div>
       </div>
 
-      {/* Grille des cartes de tarifs */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 lg:gap-6 items-stretch max-w-7xl mx-auto">
+      {/* Grille des cartes de tarifs (1 essai gratuit + 3 packs payants = 4 colonnes) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch max-w-7xl mx-auto">
         {/* Carte Essai gratuit */}
         <div className="rounded-[2.5rem] bg-creme-pure border border-mousse/10 p-7 sm:p-8 flex flex-col justify-between shadow-md">
           <div>

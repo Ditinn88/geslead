@@ -44,7 +44,7 @@ export default function BuyCreditsModal({
   const [errorMessage, setErrorMessage] = useState(null);
 
   // Orange Money Guinée State
-  const [selectedOmPackKey, setSelectedOmPackKey] = useState('pack_starter'); // Pack Découverte 5 crédits par défaut
+  const [selectedOmPackKey, setSelectedOmPackKey] = useState('pack_1'); // 15 crédits par défaut
   const [omPhone, setOmPhone] = useState('');
   const [omRef, setOmRef] = useState('');
   const [isSubmittingOm, setIsSubmittingOm] = useState(false);
@@ -422,12 +422,12 @@ export default function BuyCreditsModal({
                         </div>
                       </div>
 
-                      {/* Choix des packs en GNF (incluant 5 crédits) */}
+                      {/* Choix des packs en GNF (15, 45, 150 crédits) */}
                       <div className="space-y-2">
                         <label className="text-xs font-bold text-gray-700 font-mono uppercase tracking-wider">
                           1. Choisissez votre pack en Francs Guinéens (GNF) :
                         </label>
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                           {ORANGE_MONEY_GUINEA_CONFIG.packs.map((pack) => {
                             const isSelected = selectedOmPackKey === pack.key;
                             return (

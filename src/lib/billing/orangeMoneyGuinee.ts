@@ -24,20 +24,12 @@ export const ORANGE_MONEY_GUINEA_CONFIG = {
   whatsappSupport: (typeof import.meta !== 'undefined' && import.meta.env?.VITE_OM_GUINEA_WHATSAPP) || '+224 624 00 00 00',
   packs: [
     {
-      key: 'pack_starter',
-      name: 'Découverte',
-      credits: 5,
-      priceGnf: 10000,
-      priceFormatted: '10 000 GNF',
-      tagline: '1 génération complète (5 crédits) pour tester immédiatement.',
-    },
-    {
       key: 'pack_1',
       name: 'Essentiel',
       credits: 15,
       priceGnf: 30000,
       priceFormatted: '30 000 GNF',
-      tagline: '5 générations complètes pour débuter en Guinée.',
+      tagline: '5 générations complètes (15 crédits) pour débuter en Guinée.',
     },
     {
       key: 'pack_2',
