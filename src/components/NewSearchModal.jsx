@@ -15,6 +15,7 @@ import {
   Wand2,
   Search,
   Star,
+  Users
 } from 'lucide-react';
 import { AFRICAN_COUNTRIES_LIST } from '@/lib/geo';
 
