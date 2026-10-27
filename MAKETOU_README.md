@@ -140,7 +140,7 @@ L'intégration Moneroo est conservée (`MONEROO_README.md`), mais aucun bouton n
 En Guinée (Conakry), **Orange Money** représente la quasi-totalité des paiements Mobile Money. Comme la page Maketou ne propose que MTN MoMo pour la zone Guinée, une option directe **Orange Money Guinée** est intégrée dans GESLEAD :
 
 - **Packs en Francs Guinéens (GNF)** :
-  - **Essentiel (15 crédits)** : 30 000 GNF
+  - **Essentiel (15 crédits)** : 10 000 GNF
   - **Performance (45 crédits)** : 75 000 GNF
   - **Entreprise (150 crédits)** : 225 000 GNF
 - **Configuration vendeur (dans `.env`)** :

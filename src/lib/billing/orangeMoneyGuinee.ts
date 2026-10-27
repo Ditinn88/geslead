@@ -27,8 +27,8 @@ export const ORANGE_MONEY_GUINEA_CONFIG = {
       key: 'pack_1',
       name: 'Essentiel',
       credits: 15,
-      priceGnf: 30000,
-      priceFormatted: '30 000 GNF',
+      priceGnf: 10000,
+      priceFormatted: '10 000 GNF',
       tagline: '5 générations complètes (15 crédits) pour débuter en Guinée.',
     },
     {
