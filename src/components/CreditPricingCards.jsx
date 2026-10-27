@@ -60,7 +60,7 @@ const PACK_DETAILS = {
 // Cartes de la section Tarifs : essai gratuit + packs de crédits (FCFA Maketou ou GNF Orange Money Guinée)
 export default function CreditPricingCards({ onStartFree, onBuyCredits }) {
   const [catalog, setCatalog] = useState(null);
-  const [currencyZone, setCurrencyZone] = useState('xof'); // 'xof' | 'gnf'
+  const [currencyZone, setCurrencyZone] = useState('gnf'); // 'gnf' par défaut | 'xof'
 
   useEffect(() => {
     let cancelled = false;
@@ -81,20 +81,9 @@ export default function CreditPricingCards({ onStartFree, onBuyCredits }) {
 
   return (
     <div className="space-y-8">
-      {/* Sélecteur de Devise & Zone Géographique */}
+      {/* Sélecteur de Devise & Zone Géographique - GNF prioritaire */}
       <div className="flex items-center justify-center">
         <div className="inline-flex items-center p-1.5 rounded-full bg-white border border-gray-200 shadow-sm gap-1">
-          <button
-            onClick={() => setCurrencyZone('xof')}
-            className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 ${
-              !isGuinea
-                ? 'bg-argile text-white shadow-xs'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            <span>💳 Carte Bancaire (Visa/MC) & FCFA</span>
-          </button>
-
           <button
             onClick={() => setCurrencyZone('gnf')}
             className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 ${
@@ -103,7 +92,18 @@ export default function CreditPricingCards({ onStartFree, onBuyCredits }) {
                 : 'text-gray-700 hover:text-gray-900'
             }`}
           >
-            <span>🇬🇳 Guinée (Orange Money · GNF)</span>
+            <span>🇬🇳 Tarifs en Franc Guinéen (GNF · Orange Money)</span>
+          </button>
+
+          <button
+            onClick={() => setCurrencyZone('xof')}
+            className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 ${
+              !isGuinea
+                ? 'bg-argile text-white shadow-xs'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            <span>🌍 Autres Pays (FCFA & Carte Bancaire)</span>
           </button>
         </div>
       </div>

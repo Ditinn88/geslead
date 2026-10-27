@@ -15,8 +15,8 @@ import {
   Wand2,
   Search,
   Star,
-  Users
 } from 'lucide-react';
+import { AFRICAN_COUNTRIES_LIST } from '@/lib/geo';
 
 export default function NewSearchModal({
   isOpen,
@@ -41,7 +41,8 @@ export default function NewSearchModal({
   extractedCount = 0,
   onSubmit,
   creditCost = 3,
-  userCredits = 0
+  userCredits = 0,
+  isCreator = false
 }) {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(true);
@@ -90,20 +91,7 @@ export default function NewSearchModal({
     }
   ];
 
-  const countriesList = [
-    'Sénégal',
-    'Côte d\'Ivoire',
-    'Bénin',
-    'Cameroun',
-    'Guinée',
-    'Mali',
-    'Togo',
-    'Burkina Faso',
-    'Gabon',
-    'Congo',
-    'Maroc',
-    'Rwanda'
-  ];
+  const countriesList = AFRICAN_COUNTRIES_LIST;
 
   return (
     <div className="fixed inset-0 z-[120] flex items-center justify-center p-2.5 sm:p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
@@ -416,13 +404,26 @@ export default function NewSearchModal({
             </div>
 
             {/* Coût en crédits, affiché avant validation */}
-            <div className="flex items-center justify-between mt-4 px-3.5 py-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-mono text-emerald-900">
-              <span className="flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-                Coût : {creditCost} crédits
+            <div className={`flex items-center justify-between mt-4 px-3.5 py-2.5 rounded-xl border text-xs font-mono ${
+              isCreator
+                ? 'bg-amber-50 border-amber-300 text-amber-950 font-semibold'
+                : 'bg-emerald-50 border-emerald-200 text-emerald-900'
+            }`}>
+              <span className="flex items-center gap-1.5 font-bold">
+                {isCreator ? (
+                  <>
+                    <span>👑</span>
+                    <span>Accès Créateur : Gratuit (0 crédit débité)</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Coût : {creditCost} crédits</span>
+                  </>
+                )}
               </span>
-              <span className={userCredits < creditCost ? 'text-red-700 font-bold' : ''}>
-                Solde : {userCredits} crédits
+              <span className={isCreator ? 'text-amber-800 font-bold' : userCredits < creditCost ? 'text-red-700 font-bold' : ''}>
+                {isCreator ? 'Solde : Illimité ∞' : `Solde : ${userCredits} crédits`}
               </span>
             </div>
 

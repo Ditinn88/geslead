@@ -29,12 +29,12 @@ export default function BuyCreditsModal({
   userCredits = 0,
   canPurchase = false,
   reason = null, // 'insufficient' quand une génération a été bloquée
-  currentUser = null,
-  defaultTab = 'maketou', // 'maketou' | 'guinee'
+  defaultTab = 'guinee', // 'guinee' | 'maketou'
+  isCreator = false,
   onRequireAuth
 }) {
-  // Navigation entre zones de paiement
-  const [activeTab, setActiveTab] = useState(defaultTab === 'maketou' ? 'maketou' : 'guinee'); // 'guinee' | 'maketou'
+  // Navigation entre zones de paiement - Guinée GNF par défaut
+  const [activeTab, setActiveTab] = useState(defaultTab === 'maketou' ? 'maketou' : 'guinee');
   const [guineaMethod, setGuineaMethod] = useState('orange'); // 'orange' | 'momo' | 'card'
 
   // Maketou State
@@ -205,7 +205,16 @@ export default function BuyCreditsModal({
 
         {/* Corps déroulant */}
         <div className="p-5 sm:p-6 space-y-4 overflow-y-auto flex-1">
-          {reason === 'insufficient' && (
+          {isCreator && (
+            <div className="flex items-center gap-2.5 p-4 rounded-2xl bg-amber-50 border border-amber-300 text-amber-950 text-xs sm:text-sm font-medium shadow-xs">
+              <span className="text-xl">👑</span>
+              <div>
+                <strong>Accès Créateur Actif :</strong> Vous bénéficiez d'un accès 100% gratuit et illimité à toutes les extractions et fonctionnalités de GESLEAD sans consommer de crédits.
+              </div>
+            </div>
+          )}
+
+          {reason === 'insufficient' && !isCreator && (
             <div className="flex items-start gap-2.5 p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs sm:text-sm">
               <TriangleAlert className="w-4 h-4 mt-0.5 flex-shrink-0 text-amber-600" />
               <span>

@@ -5,8 +5,9 @@ export const WELCOME_CREDITS = 5;
 // Affichage uniquement : le débit réel est fait par la fonction SQL spend_search_credits() (3 crédits)
 export const SEARCH_CREDIT_COST = 3;
 
-export function formatPrice(amount: number, currency: string): string {
+export function formatPrice(amount: number, currency: string = 'GNF'): string {
   const value = new Intl.NumberFormat('fr-FR').format(amount);
+  if (currency === 'GNF') return `${value} GNF`;
   return currency === 'XOF' || currency === 'XAF' ? `${value} FCFA` : `${value} ${currency}`;
 }
 

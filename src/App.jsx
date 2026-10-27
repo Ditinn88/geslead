@@ -58,6 +58,8 @@ import CreditPricingCards from './components/CreditPricingCards';
 import { WELCOME_CREDITS, SEARCH_CREDIT_COST, hasRealAccount, fetchCredits, spendSearchCredits } from './lib/billing/credits';
 import { RETURN_PATH as MONEROO_RETURN_PATH } from './lib/billing/moneroo';
 import { RETURN_PATH as MAKETOU_RETURN_PATH } from './lib/billing/maketou';
+import { getCountryConfig } from './lib/geo';
+import { checkIsCreator, setCreatorMode } from './lib/billing/creator';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -195,12 +197,32 @@ export default function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [userCredits, setUserCredits] = useState(WELCOME_CREDITS);
   const [showPassword, setShowPassword] = useState(false);
-  const [authReady, setAuthReady] = useState(!supabase);
+  // Statut Créateur (Accès Gratuit & Illimité)
+  const [isCreator, setIsCreator] = useState(() => checkIsCreator(currentUser));
 
-  // Achat de crédits (Maketou & Orange Money Guinée)
+  useEffect(() => {
+    const isUserCreator = checkIsCreator(currentUser);
+    setIsCreator(isUserCreator);
+    if (isUserCreator) {
+      setUserCredits(9999);
+    }
+  }, [currentUser]);
+
+  const handleToggleCreatorMode = (enabled) => {
+    setCreatorMode(enabled);
+    setIsCreator(enabled);
+    setToastNotification({
+      type: 'success',
+      message: enabled
+        ? '👑 Mode Créateur activé : Accès 100% gratuit et illimité à toutes les fonctions de GESLEAD !'
+        : 'Mode Créateur désactivé.'
+    });
+  };
+
+  // Achat de crédits (Guinée GNF & Maketou FCFA) - Guinée par défaut
   const [isBuyCreditsOpen, setIsBuyCreditsOpen] = useState(false);
   const [buyCreditsReason, setBuyCreditsReason] = useState(null);
-  const [buyCreditsDefaultTab, setBuyCreditsDefaultTab] = useState('maketou');
+  const [buyCreditsDefaultTab, setBuyCreditsDefaultTab] = useState('guinee');
 
   // Video / Demo Modal State
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
@@ -226,6 +248,10 @@ export default function App() {
 
   // Solde lu en base pour les vrais comptes (le compte démo garde un solde local)
   const refreshCredits = async () => {
+    if (checkIsCreator(currentUser)) {
+      setUserCredits(9999);
+      return 9999;
+    }
     if (!hasRealAccount(currentUser)) return null;
     const credits = await fetchCredits(currentUser.id);
     if (credits !== null) setUserCredits(credits);
@@ -237,7 +263,7 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser?.id]);
 
-  const openBuyCredits = (reason = null, tab = 'maketou') => {
+  const openBuyCredits = (reason = null, tab = 'guinee') => {
     setBuyCreditsReason(reason);
     setBuyCreditsDefaultTab(tab);
     setIsBuyCreditsOpen(true);
@@ -299,7 +325,12 @@ export default function App() {
         });
         if (error) throw error;
         setCurrentUser(data.user);
-        setAuthSuccessMsg(`Compte créé avec succès ! ${WELCOME_CREDITS} crédits de prospection vous sont offerts.`);
+        const isUserCreator = checkIsCreator(data.user);
+        setAuthSuccessMsg(
+          isUserCreator
+            ? '👑 Compte Créateur activé ! Accès 100% gratuit et illimité à vie.'
+            : `Compte créé avec succès ! ${WELCOME_CREDITS} crédits de prospection vous sont offerts.`
+        );
         setTimeout(() => {
           setIsAuthModalOpen(false);
           goToDashboardAfterAuth();
@@ -311,7 +342,12 @@ export default function App() {
         });
         if (error) throw error;
         setCurrentUser(data.user);
-        setAuthSuccessMsg('Connexion réussie ! Bienvenue.');
+        const isUserCreator = checkIsCreator(data.user);
+        setAuthSuccessMsg(
+          isUserCreator
+            ? '👑 Bienvenue Créateur ! Accès 100% gratuit et illimité activé.'
+            : 'Connexion réussie ! Bienvenue.'
+        );
         setTimeout(() => {
           setIsAuthModalOpen(false);
           goToDashboardAfterAuth();
@@ -403,48 +439,15 @@ export default function App() {
     const minRatNum = parseFloat(minRating) || 0;
     const minRevNum = parseInt(minReviews, 10) || 0;
 
-    let countryCode = 'SN';
-    let phonePrefix = '+221';
-    let mobilePrefixes = ['77', '78', '76', '70'];
-    let sampleDistricts = ['Plateau', 'Almadies', 'Point E', 'Mermoz', 'Médina', 'Ngor', 'Fann', 'Yoff', 'Ouakam', 'Grand Dakar'];
-
-    const normCountry = (country || '').toLowerCase();
-    if (normCountry.includes('ivoire') || normCountry.includes('ci')) {
-      countryCode = 'CI';
-      phonePrefix = '+225';
-      mobilePrefixes = ['07', '05', '01'];
-      sampleDistricts = ['Cocody', 'Marcory', 'Plateau', 'Treichville', 'Yopougon', 'Riviera', 'Deux Plateaux', 'Angré', 'Zone 4'];
-    } else if (normCountry.includes('cameroun') || normCountry.includes('cm')) {
-      countryCode = 'CM';
-      phonePrefix = '+237';
-      mobilePrefixes = ['69', '67', '65'];
-      sampleDistricts = ['Akwa', 'Bonanjo', 'Bonapriso', 'Bali', 'Bastos', 'Omnisports', 'Deido', 'Makepe'];
-    } else if (normCountry.includes('guinée') || normCountry.includes('gn')) {
-      countryCode = 'GN';
-      phonePrefix = '+224';
-      mobilePrefixes = ['62', '66'];
-      sampleDistricts = ['Kaloum', 'Dixinn', 'Matam', 'Ratoma', 'Kipé', 'Taouyah'];
-    } else if (normCountry.includes('mali') || normCountry.includes('ml')) {
-      countryCode = 'ML';
-      phonePrefix = '+223';
-      mobilePrefixes = ['70', '66', '76'];
-      sampleDistricts = ['Badalabougou', 'ACI 2000', 'Hamdallaye', 'Hippodrome', 'Quinzambougou'];
-    } else if (normCountry.includes('maroc') || normCountry.includes('ma')) {
-      countryCode = 'MA';
-      phonePrefix = '+212';
-      mobilePrefixes = ['6', '7'];
-      sampleDistricts = ['Gauthier', 'Maârif', 'Agdal', 'Guéliz', 'Hivernage', 'Anfa'];
-    } else if (normCountry.includes('togo') || normCountry.includes('tg')) {
-      countryCode = 'TG';
-      phonePrefix = '+228';
-      mobilePrefixes = ['90', '91', '92'];
-      sampleDistricts = ['Tokoin', 'Bè', 'Nyékonakpoè', 'Agoè', 'Adidogomé'];
-    } else if (normCountry.includes('bénin') || normCountry.includes('bj')) {
-      countryCode = 'BJ';
-      phonePrefix = '+229';
-      mobilePrefixes = ['97', '96', '95'];
-      sampleDistricts = ['Cadjehoun', 'Haie Vive', 'Ganhi', 'Akpakpa', 'Fidjrossè', 'Cocotomey'];
-    }
+    const countryCfg = getCountryConfig(country);
+    const countryCode = countryCfg.code;
+    const phonePrefix = countryCfg.phonePrefix;
+    const mobilePrefixes = countryCfg.mobilePrefixes && countryCfg.mobilePrefixes.length > 0
+      ? countryCfg.mobilePrefixes
+      : ['77', '78', '70'];
+    const sampleDistricts = countryCfg.sampleDistricts && countryCfg.sampleDistricts.length > 0
+      ? countryCfg.sampleDistricts
+      : [city || 'Centre'];
 
     const prefixes = ['Grande', 'Cabinet', 'Clinique', 'Centre', 'Espace', 'Groupe', 'Société', 'Comptoir', 'Atelier', 'Agence', 'Laboratoire', 'Alliance', 'Union', 'Maison', 'Institut', 'Compagnie'];
     const suffixes = ['Centrale', 'Prestige', 'Moderne', "de l'Avenir", 'Progrès', 'Excellence', 'Expertise', 'Plus', 'Elite', 'Partenaire', 'Express', 'Premium', '& Associés', 'Général', 'International'];
@@ -546,13 +549,15 @@ export default function App() {
       return;
     }
 
-    // Chaque génération de leads consomme 3 crédits (débit serveur pour les vrais comptes)
-    if (hasRealAccount(currentUser)) {
+    // Vérification et débit des crédits (Accès 100% GRATUIT et ILLIMITÉ pour le Créateur)
+    if (isCreator) {
+      // Aucun débit pour le Créateur de l'application
+    } else if (hasRealAccount(currentUser)) {
       const spent = await spendSearchCredits();
       if (!spent.ok) {
         if (spent.reason === 'INSUFFICIENT_CREDITS') {
           setIsNewSearchModalOpen(false);
-          openBuyCredits('insufficient');
+          openBuyCredits('insufficient', 'guinee');
         } else {
           alert('Impossible de débiter vos crédits. Vérifiez votre connexion puis réessayez.');
         }
@@ -562,7 +567,7 @@ export default function App() {
     } else {
       if (userCredits < SEARCH_CREDIT_COST) {
         setIsNewSearchModalOpen(false);
-        openBuyCredits('insufficient');
+        openBuyCredits('insufficient', 'guinee');
         return;
       }
       setUserCredits((prev) => Math.max(0, prev - SEARCH_CREDIT_COST));
@@ -1041,6 +1046,8 @@ export default function App() {
           }}
           onExportCsv={handleExportCsv}
           onDeleteSearch={handleDeleteSearch}
+          isCreator={isCreator}
+          onToggleCreatorMode={handleToggleCreatorMode}
         />
       ) : currentView === 'leads' ? (
         <WorkspaceModal
@@ -1129,15 +1136,28 @@ export default function App() {
 
             {/* Action CTAs (Right) */}
             <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-              {currentUser && (
+              {(currentUser || isCreator) && (
                 <button
                   onClick={() => openBuyCredits()}
-                  title="Acheter des crédits"
-                  className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 text-xs font-mono font-medium cursor-pointer transition-colors"
+                  title={isCreator ? "Accès Créateur Illimité" : "Acheter des crédits"}
+                  className={`hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-mono font-medium cursor-pointer transition-colors ${
+                    isCreator
+                      ? 'bg-amber-100 hover:bg-amber-200 border-amber-300 text-amber-950 font-bold shadow-xs'
+                      : 'bg-emerald-50 hover:bg-emerald-100 border-emerald-200 text-emerald-800'
+                  }`}
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>{userCredits} crédits</span>
-                  <Plus className="w-3 h-3" />
+                  {isCreator ? (
+                    <>
+                      <span>👑</span>
+                      <span>Créateur : <strong className="text-amber-900">Illimité</strong></span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>{userCredits} crédits</span>
+                      <Plus className="w-3 h-3" />
+                    </>
+                  )}
                 </button>
               )}
 
@@ -1865,7 +1885,7 @@ export default function App() {
             Des tarifs adaptés aux réalités du marché.
           </h2>
           <p className="text-charbon/70 text-sm sm:text-base mt-4">
-            Sans abonnement : payez uniquement les crédits que vous utilisez. Vos crédits n'expirent jamais.
+            Tarifs transparents en <strong>Franc Guinéen (GNF)</strong> et Mobile Money : payez uniquement selon vos besoins. Vos crédits n'expirent jamais.
           </p>
         </div>
 
@@ -2412,6 +2432,7 @@ export default function App() {
         onSubmit={handleStartNewSearch}
         creditCost={SEARCH_CREDIT_COST}
         userCredits={userCredits}
+        isCreator={isCreator}
       />
 
       {/* ========================================================================= */}
@@ -2425,6 +2446,7 @@ export default function App() {
         reason={buyCreditsReason}
         currentUser={currentUser}
         defaultTab={buyCreditsDefaultTab}
+        isCreator={isCreator}
         onRequireAuth={() => {
           setIsBuyCreditsOpen(false);
           openSignIn('signin');

@@ -22,9 +22,9 @@ import {
   MessageCircle,
   FileSpreadsheet,
   Settings,
-  Sliders,
   Check
 } from 'lucide-react';
+import { AFRICAN_COUNTRIES_LIST, getCountryConfig } from '@/lib/geo';
 
 export default function DashboardView({
   currentUser,
@@ -36,7 +36,9 @@ export default function DashboardView({
   onBackToLanding,
   onViewLeads,
   onExportCsv,
-  onDeleteSearch
+  onDeleteSearch,
+  isCreator = false,
+  onToggleCreatorMode
 }) {
   // Navigation & UI States
   const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard' | 'stats'
@@ -374,12 +376,25 @@ export default function DashboardView({
             {/* Badge de crédits (ouvre l'achat de crédits) */}
             <button
               onClick={onBuyCredits}
-              title="Acheter des crédits"
-              className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 text-[11px] sm:text-xs font-mono font-medium cursor-pointer transition-colors"
+              title={isCreator ? 'Accès Créateur Illimité' : 'Acheter des crédits'}
+              className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 rounded-full border text-[11px] sm:text-xs font-mono font-medium cursor-pointer transition-colors ${
+                isCreator
+                  ? 'bg-amber-100 hover:bg-amber-200 border-amber-300 text-amber-950 font-bold shadow-xs'
+                  : 'bg-emerald-50 hover:bg-emerald-100 border-emerald-200 text-emerald-800'
+              }`}
             >
-              <Sparkles className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
-              <span>{userCredits} <span className="hidden sm:inline">crédits</span><span className="sm:hidden">cr.</span></span>
-              <Plus className="w-3 h-3 flex-shrink-0" />
+              {isCreator ? (
+                <>
+                  <span className="text-xs">👑</span>
+                  <span>Créateur : <strong className="text-amber-900">Illimité</strong></span>
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                  <span>{userCredits} <span className="hidden sm:inline">crédits</span><span className="sm:hidden">cr.</span></span>
+                  <Plus className="w-3 h-3 flex-shrink-0" />
+                </>
+              )}
             </button>
 
             {/* Bouton Notifications avec Popover */}
@@ -529,18 +544,30 @@ export default function DashboardView({
                   <p className="text-[11px] sm:text-xs text-gray-500 mt-1">Mobiles vérifiés</p>
                 </div>
 
-                <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-gray-200/80 shadow-xs">
+                <div className={`rounded-2xl sm:rounded-3xl p-4 sm:p-5 border shadow-xs ${
+                  isCreator ? 'bg-amber-50/70 border-amber-300' : 'bg-white border-gray-200/80'
+                }`}>
                   <div className="flex items-center justify-between text-gray-400">
-                    <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider font-mono">Crédits</span>
+                    <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider font-mono">
+                      {isCreator ? '👑 Accès Créateur' : 'Crédits'}
+                    </span>
                     <Sparkles className="w-4 h-4 text-amber-500" />
                   </div>
-                  <div className="mt-2 sm:mt-3 text-2xl sm:text-3xl font-extrabold text-gray-900">{userCredits}</div>
-                  <button
-                    onClick={onBuyCredits}
-                    className="text-[11px] sm:text-xs text-argile hover:underline font-semibold mt-1 cursor-pointer"
-                  >
-                    Acheter des crédits →
-                  </button>
+                  <div className="mt-2 sm:mt-3 text-2xl sm:text-3xl font-extrabold text-gray-900">
+                    {isCreator ? 'Illimité ∞' : userCredits}
+                  </div>
+                  {isCreator ? (
+                    <span className="text-[11px] sm:text-xs text-amber-800 font-semibold mt-1 inline-block">
+                      Toutes extractions 100% gratuites
+                    </span>
+                  ) : (
+                    <button
+                      onClick={onBuyCredits}
+                      className="text-[11px] sm:text-xs text-argile hover:underline font-semibold mt-1 cursor-pointer"
+                    >
+                      Acheter des crédits →
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -844,12 +871,14 @@ export default function DashboardView({
                     onChange={(e) => setPrefCountryDefault(e.target.value)}
                     className="bg-white border border-gray-200 text-xs rounded-lg px-2 py-1 font-medium focus:outline-none"
                   >
-                    <option value="Sénégal">Sénégal (+221)</option>
-                    <option value="Côte d'Ivoire">Côte d'Ivoire (+225)</option>
-                    <option value="Bénin">Bénin (+229)</option>
-                    <option value="Cameroun">Cameroun (+237)</option>
-                    <option value="Mali">Mali (+223)</option>
-                    <option value="Guinée">Guinée (+224)</option>
+                    {AFRICAN_COUNTRIES_LIST.map((c) => {
+                      const cfg = getCountryConfig(c);
+                      return (
+                        <option key={c} value={c}>
+                          {c} ({cfg.phonePrefix})
+                        </option>
+                      );
+                    })}
                   </select>
                 </div>
 
@@ -867,6 +896,34 @@ export default function DashboardView({
                     <option value="30">30 leads (recommandé)</option>
                     <option value="60">60 leads</option>
                   </select>
+                </div>
+
+                {/* Accès Créateur de l'App (Utilisation Gratuite & Illimitée) */}
+                <div className="pt-2 border-t border-gray-100">
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200">
+                    <div className="pr-2">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-base">👑</span>
+                        <p className="font-bold text-xs text-amber-950">Accès Créateur de l'App</p>
+                      </div>
+                      <p className="text-[11px] text-amber-900/80 mt-0.5">
+                        {isCreator
+                          ? 'Actif : Extractions 100% gratuites et illimitées (0 débit).'
+                          : 'Activer le mode créateur pour utiliser l\'app sans restriction de crédits.'}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => onToggleCreatorMode?.(!isCreator)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex-shrink-0 cursor-pointer ${
+                        isCreator
+                          ? 'bg-amber-600 hover:bg-amber-700 text-white shadow-xs'
+                          : 'bg-white hover:bg-amber-100 text-amber-900 border border-amber-300'
+                      }`}
+                    >
+                      {isCreator ? '✓ Mode Actif' : 'Activer'}
+                    </button>
+                  </div>
                 </div>
               </div>
 
